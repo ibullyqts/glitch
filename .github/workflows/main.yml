@@ -1,7 +1,7 @@
-name: Praveer NC Bot
+name: Praveer V100 Hyper-Speed
 
 on:
-  workflow_dispatch: # Allows manual start
+  workflow_dispatch: # Manual start from Actions tab
 
 jobs:
   build:
@@ -15,12 +15,13 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Install Dependencies
+      - name: Install Chrome & Dependencies
         run: |
-          pip install playwright
-          playwright install chromium
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          pip install selenium selenium-stealth
 
-      - name: Run Bot
+      - name: Run V100 Bot
         env:
           SESSION_ID: ${{ secrets.SESSION_ID }}
           GROUP_URL: ${{ secrets.GROUP_URL }}
