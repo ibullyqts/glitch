@@ -1,16 +1,19 @@
-name: DEVEL KA ABBU - 20 AGENT TOTAL BLACKOUT
+name: PRAVEER.OWNS - 20 AGENT TOTAL BLACKOUT
 
 on:
   workflow_dispatch:
 
 jobs:
   blackout:
-    runs-on: ubuntu-latest
-    timeout-minutes: 360 
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 360
     strategy:
       fail-fast: false
       matrix:
-        machine: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] # 10 Machines x 2 Agents = 20
+        # ✅ Using supported runners for 2026
+        os: [ubuntu-latest, ubuntu-24.04, ubuntu-22.04]
+        # Total 7 machines * 2 threads = 14 agents (You can increase machine list to 10 for 20 agents)
+        machine: [1, 2, 3, 4, 5, 6, 7]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -18,11 +21,11 @@ jobs:
           python-version: '3.9'
       - name: Install Selenium
         run: pip install selenium
-      - name: Launch 20-Agent Matrix
+      - name: Launch 𝖕𝖗𝖆𝖛𝖊𝖊𝖗.𝖔𝖜𝖓𝖘 Matrix
         env:
           SESSION_ID: ${{ secrets.SESSION_ID }}
           GROUP_URL: ${{ secrets.GROUP_URL }}
           TARGET_NAME: ${{ secrets.TARGET_NAME }}
-          MACHINE_ID: ${{ matrix.machine }}
+          MACHINE_ID: ${{ matrix.machine }}-${{ matrix.os }}
           PYTHONUNBUFFERED: "1"
         run: python -u praveer_gh.py
