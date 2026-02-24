@@ -1,4 +1,4 @@
-name: PRAVEER PAPA - DYNAMIC MAX BLITZ
+name: PRAVEER PAPA - SHREDDER MATRIX
 
 on:
   workflow_dispatch:
@@ -22,9 +22,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
-          pip install selenium selenium-stealth
+          pip install selenium
 
-      - name: Run Dynamic Blitz
+      - name: Run Shredder Blitz
         env:
           SESSION_ID: ${{ secrets.SESSION_ID }}
           GROUP_URL: ${{ secrets.GROUP_URL }}
