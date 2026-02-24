@@ -25,37 +25,4 @@ jobs:
           TARGET_NAME: ${{ secrets.TARGET_NAME }}
           MACHINE_ID: ${{ matrix.machine }}
           PYTHONUNBUFFERED: "1"
-        run: python -u praveer_gh.pyname: PRAVEER NC - 10 AGENT STEALTH MATRIX
-
-on:
-  workflow_dispatch: # Manual trigger for maximum control
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        machine: [1, 2, 3, 4, 5] # Deploy across 5 runners
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
-          pip install selenium
-
-      - name: Launch Stealth Blitz
-        env:
-          SESSION_ID: ${{ secrets.SESSION_ID }}
-          GROUP_URL: ${{ secrets.GROUP_URL }}
-          TARGET_NAME: ${{ secrets.TARGET_NAME }}
-          MACHINE_ID: ${{ matrix.machine }}
-          PYTHONUNBUFFERED: "1" # Ensures real-time logging
         run: python -u praveer_gh.py
