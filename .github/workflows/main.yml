@@ -1,14 +1,14 @@
-name: PRAVEER PAPA - 10 AGENT MATRIX
+name: PRAVEER NC - 10 AGENT STEALTH MATRIX
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # Manual trigger for maximum control
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        machine: [1, 2, 3, 4, 5]
+        machine: [1, 2, 3, 4, 5] # Deploy across 5 runners
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -24,10 +24,11 @@ jobs:
           sudo apt-get install -y google-chrome-stable
           pip install selenium
 
-      - name: Run Matrix Blitz
+      - name: Launch Stealth Blitz
         env:
           SESSION_ID: ${{ secrets.SESSION_ID }}
           GROUP_URL: ${{ secrets.GROUP_URL }}
           TARGET_NAME: ${{ secrets.TARGET_NAME }}
           MACHINE_ID: ${{ matrix.machine }}
-        run: python praveer_gh.py
+          PYTHONUNBUFFERED: "1" # Ensures real-time logging
+        run: python -u praveer_gh.py
