@@ -1,94 +1,99 @@
-# -*- coding: utf-8 -*-
-# 🚀 PROJECT: PRAVEER NC (ANTI-THROTTLE)
-# 📅 STATUS: JITTER BURST ENABLED | 10 AGENTS
-
-import os, time, random, threading, sys, gc, tempfile
-from concurrent.futures import ThreadPoolExecutor
+import os
+import time
+import random
+import sys
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium_stealth import stealth
 
-# --- CONFIG ---
-THREADS = 2  
-TOTAL_DURATION = 21600  
-SESSION_LIMIT = 360 # Restart session every 6 mins to clear blocks
+# Forces logs to appear instantly in the GitHub console
+def log(message):
+    print(f"[{time.strftime('%H:%M:%S')}] {message}")
+    sys.stdout.flush()
 
-GLOBAL_SENT = 0
-START_TIME = time.time()
-COUNTER_LOCK = threading.Lock()
-MACHINE_ID = os.getenv("MACHINE_ID", "1")
+def setup_driver():
+    log("Initializing Chrome for 10-Agent Matrix...")
+    options = Options()
+    options.add_argument("--headless=new") # Required for GitHub Actions
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1920,1080")
+    # Real-world User Agent to avoid detection
+    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
+    
+    driver = webdriver.Chrome(options=options)
+    
+    # Apply stealth to hide headless fingerprints
+    stealth(driver,
+            languages=["en-US", "en"],
+            vendor="Google Inc.",
+            platform="Win32",
+            webgl_vendor="Intel Inc.",
+            renderer="Intel Iris OpenGL Engine",
+            fix_hairline=True)
+    
+    driver.set_page_load_timeout(60)
+    return driver
 
-def live_logger():
-    while True:
-        elapsed = time.strftime("%H:%M:%S", time.gmtime(time.time() - START_TIME))
-        with COUNTER_LOCK: current_total = GLOBAL_SENT
-        sys.stdout.write(f"\r\033[1;32m[M{MACHINE_ID}] UP: {elapsed} | IMPACT: {current_total} | PAPA POWER 👑\033[0m")
-        sys.stdout.flush()
-        time.sleep(1)
+def run_agent(machine_id):
+    driver = None
+    try:
+        log(f"MACHINE {machine_id} - Starting Cycle")
+        driver = setup_driver()
+        
+        target_url = os.getenv('GROUP_URL')
+        log(f"Navigating to: {target_url}")
+        driver.get(target_url)
+        
+        # Give the page 15 seconds to fully load scripts/chats
+        time.sleep(15) 
 
-def get_payload():
-    header = "👑 PRAVEER PAPA 👑\n"
-    direction_chaos = ("\u202E" + "\u202D") * 70 
-    z_tower = "̸" * 60
-    bloat = "".join(random.choice(["\u200B", "\u200D"]) for _ in range(2500))
-    lines = [header, bloat]
-    for _ in range(20):
-        lines.append(direction_chaos + "PRAVEER_OWNZ_YOU" + z_tower)
-    return "\n".join(lines)
+        # --- SENDING LOGIC ---
+        log("Searching for message input field...")
+        wait = WebDriverWait(driver, 20)
+        
+        # Finds common chat input types (divs, inputs, or textareas)
+        message_box = wait.until(EC.presence_of_element_located((By.XPATH, "//div[@contenteditable='true'] | //input[@type='text'] | //textarea")))
+        
+        # Prepare the message
+        content = f"Matrix Agent {machine_id} online. Status: Active. ID: {random.randint(100, 999)}"
+        message_box.send_keys(content)
+        log("Message typed.")
+        
+        time.sleep(2)
+        
+        # Press ENTER key to send (works for most chat platforms)
+        message_box.send_keys(u'\ue007') 
+        log("✅ Message sent successfully!")
+        
+    except Exception as e:
+        log(f"❌ Error encountered: {e}")
+        # Optional: takes a screenshot to help you debug in GitHub artifacts
+        # driver.save_screenshot(f"error_machine_{machine_id}.png")
+    finally:
+        if driver:
+            driver.quit()
+            log("Browser session closed safely.")
 
-def run_life_cycle(agent_id, cookie, target):
-    global GLOBAL_SENT
-    while True:
-        driver = None
-        try:
-            chrome_options = Options()
-            chrome_options.add_argument("--headless=new")
-            chrome_options.add_argument("--no-sandbox")
-            chrome_options.add_argument("--window-size=1920,1080")
-            driver = webdriver.Chrome(options=chrome_options)
-            wait = WebDriverWait(driver, 20)
-            
-            driver.get("https://www.instagram.com/")
-            driver.add_cookie({'name': 'sessionid', 'value': cookie, 'path': '/', 'domain': '.instagram.com'})
-            driver.refresh()
-            time.sleep(5)
-            driver.get(f"https://www.instagram.com/direct/t/{target}/")
-            
-            session_start = time.time()
-            burst_counter = 0
-            
-            while (time.time() - session_start) < SESSION_LIMIT:
-                try:
-                    box = wait.until(EC.element_to_be_clickable((By.XPATH, "//div[@role='textbox']")))
-                    driver.execute_script("arguments[0].focus();", box)
-                    driver.execute_script("document.execCommand('insertText', false, arguments[0]);", get_payload())
-                    box.send_keys(Keys.ENTER)
-                    
-                    with COUNTER_LOCK: GLOBAL_SENT += 1
-                    burst_counter += 1
-                    
-                    # ANTI-THROTTLE JITTER
-                    if burst_counter >= 50:
-                        time.sleep(random.uniform(5, 10)) # Take a breath
-                        burst_counter = 0
-                    else:
-                        time.sleep(random.uniform(0.1, 0.4)) # Standard fast speed
-                except:
-                    time.sleep(5)
-        except: pass
-        finally:
-            if driver: driver.quit()
-            time.sleep(2)
+if __name__ == "__main__":
+    m_id = os.getenv('MACHINE_ID', '1')
+    start_time = time.time()
+    
+    # 5.5 hours in seconds (19800s) to stay safe under GitHub's 6h limit
+    max_duration = 5.5 * 60 * 60 
 
-def main():
-    cookie = os.environ.get("SESSION_ID", "").strip()
-    raw_url = os.environ.get("GROUP_URL", "").strip()
-    target_id = raw_url.split('/')[-2] if '/' in raw_url else raw_url
-    threading.Thread(target=live_logger, daemon=True).start()
-    with ThreadPoolExecutor(max_workers=THREADS) as executor:
-        for i in range(THREADS): executor.submit(run_life_cycle, i+1, cookie, target_id)
+    log(f"--- 10-AGENT MATRIX STARTING (Machine {m_id}) ---")
 
-if __name__ == "__main__": main()
+    while (time.time() - start_time) < max_duration:
+        run_agent(m_id)
+        
+        # Random sleep between 1 to 3 minutes between sends to look human
+        wait_time = random.randint(60, 180)
+        log(f"Cycle complete. Waiting {wait_time}s before next attempt...")
+        time.sleep(wait_time)
+
+    log("5.5 Hours reached. Preparing for handoff to the next job.")
